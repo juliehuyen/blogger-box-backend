@@ -9,11 +9,30 @@ public class Post {
     private String title;
     private String content;
     private Date createdDate;
-    private UUID category;
+    private UUID categoryId;
 
 
-    public Post(UUID id, String title) {
+    public Post(UUID id, String title, String content, UUID categoryId, Date createdDate) {
         this.id = id;
         this.title = title;
+        this.content = content;
+        this.categoryId = categoryId;
+        this.createdDate = createdDate;
+    }
+
+    public Object getId() {
+        return id;
+    }
+
+    public UUID getCategoryId() {
+        return categoryId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

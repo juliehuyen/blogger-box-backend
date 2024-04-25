@@ -1,7 +1,5 @@
 package com.dauphine.blogger.controllers;
 
-import com.dauphine.blogger.dto.CreationCategoryRequest;
-import com.dauphine.blogger.dto.UpdateCategoryRequest;
 import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,24 +40,13 @@ public class CategoryController {
         return categoryService.getById(id);
     }
 
-    @GetMapping("/{id}/posts")
-    @Operation(
-            summary = "Retrieve all posts by a category",
-            description = "Returns all posts by path variable"
-    )
-    public String retrievePostByCategory(
-            @Parameter(description = "Id of the category")
-            @PathVariable UUID id) {
-        return "Posts of " + id;
-    }
-
     @PostMapping("")
     @Operation(
             summary = "Create a new category",
             description = "Creating a new category"
     )
     public Category createCategory(
-            @Parameter(description = "Category object to be created")
+            @Parameter(description = "Name of the category")
             @RequestBody String name) {
         return categoryService.create(name);
     }
@@ -72,7 +59,7 @@ public class CategoryController {
     public Category updateCategory(
             @Parameter(description = "Id of the category to be updated")
             @PathVariable UUID id,
-            @Parameter(description = "Category object to be updated")
+            @Parameter(description = "Name of the category")
             @RequestBody String name) {
         return categoryService.update(id, name);
     }

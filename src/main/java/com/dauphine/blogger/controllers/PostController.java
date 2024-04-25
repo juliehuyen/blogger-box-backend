@@ -1,31 +1,22 @@
 package com.dauphine.blogger.controllers;
 
-import com.dauphine.blogger.dto.CreationCategoryRequest;
-import com.dauphine.blogger.dto.CreationPostRequest;
-import com.dauphine.blogger.dto.UpdateCategoryRequest;
-import com.dauphine.blogger.dto.UpdatePostRequest;
-import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
+import com.dauphine.blogger.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/posts")
 public class PostController {
+    private final PostService postService;
 
-    private final List<Post> temporaryPosts;
-
-    public PostController() {
-        temporaryPosts = new ArrayList<>();
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post"));
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my second post"));
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my third post"));
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
 
     @PostMapping("")
@@ -33,10 +24,14 @@ public class PostController {
             summary = "Create a new post",
             description = "Create a new post with the given title and content"
     )
-    public String createPost(
-            @Parameter(description = "Post object to be created")
-            @RequestBody CreationPostRequest post) {
-        return "Creating a new post.";
+    public Post createPost(
+            @Parameter(description = "Title of the post")
+            @RequestBody String title,
+            @Parameter(description = "Content of the post")
+            @RequestBody String content,
+            @Parameter(description = "Id of the category")
+            @RequestBody UUID categoryId) {
+        return postService.create(title, content, categoryId);
     }
 
     @PutMapping("/{id}")
@@ -44,12 +39,14 @@ public class PostController {
             summary = "Update post",
             description = "Update post by id"
     )
-    public String updatePost(
+    public Post updatePost(
             @Parameter(description = "Id of the post to be updated")
             @PathVariable UUID id,
-            @Parameter(description = "Post object to be updated")
-            @RequestBody UpdatePostRequest post) {
-        return "Updating a post.";
+            @Parameter(description = "Title of the post")
+            @RequestBody String title,
+            @Parameter(description = "Content of the post")
+            @RequestBody String content) {
+        return postService.update(id, title, content);
     }
 
     @DeleteMapping("/{id}")
@@ -57,10 +54,10 @@ public class PostController {
             summary = "Delete post",
             description = "Delete post by id"
     )
-    public String deletePost(
+    public void deletePost(
             @Parameter(description = "Id of the post to delete")
             @PathVariable UUID id) {
-        return "Deleting a post.";
+        postService.deleteById(id);
     }
 
     @GetMapping("")
@@ -68,8 +65,19 @@ public class PostController {
             summary = "Get all posts",
             description = "Retrieve all posts ordered by creation date"
     )
-    public String retrieveAllPosts() {
-        return "All posts.";
+    public List<Post> retrieveAllPosts() {
+        return postService.getAll();
+    }
+
+    @GetMapping("/categories/{id}/posts")
+    @Operation(
+            summary = "Retrieve all posts by a category",
+            description = "Returns all posts by path variable"
+    )
+    public List<Post> retrievePostByCategory(
+            @Parameter(description = "Id of the category")
+            @PathVariable UUID categoryId) {
+        return postService.getAllByCategoryId(categoryId);
     }
 
 }
