@@ -12,4 +12,11 @@ public class Category {
         this.name = name;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setName(String newName) {
+        name = newName;
+    }
 }

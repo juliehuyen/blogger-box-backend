@@ -3,12 +3,12 @@ package com.dauphine.blogger.controllers;
 import com.dauphine.blogger.dto.CreationCategoryRequest;
 import com.dauphine.blogger.dto.UpdateCategoryRequest;
 import com.dauphine.blogger.models.Category;
+import com.dauphine.blogger.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,13 +16,10 @@ import java.util.UUID;
 @RequestMapping("/v1/categories")
 public class CategoryController {
 
-    private final List<Category> temporaryCategories;
+    private final CategoryService categoryService;
 
-    public CategoryController() {
-        temporaryCategories = new ArrayList<>();
-        temporaryCategories.add(new Category(UUID.randomUUID(), "my first category"));
-        temporaryCategories.add(new Category(UUID.randomUUID(), "my second category"));
-        temporaryCategories.add(new Category(UUID.randomUUID(), "my third category"));
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @GetMapping("")
@@ -30,8 +27,8 @@ public class CategoryController {
             summary = "Retrieve all categories",
             description = "Returns all the categories"
     )
-    public String retrieveAllCategories() {
-        return "All categories.";
+    public List<Category> retrieveAllCategories() {
+        return categoryService.getAll();
     }
 
     @GetMapping("/{id}")
@@ -39,10 +36,10 @@ public class CategoryController {
             summary = "Retrieve a category by id",
             description = "Returns a category by path variable"
     )
-    public String retrieveCategoryById(
+    public Category retrieveCategoryById(
             @Parameter(description = "Id of the category to retrieve")
             @PathVariable UUID id) {
-        return "Category " + id;
+        return categoryService.getById(id);
     }
 
     @GetMapping("/{id}/posts")
@@ -61,10 +58,10 @@ public class CategoryController {
             summary = "Create a new category",
             description = "Creating a new category"
     )
-    public String createCategory(
+    public Category createCategory(
             @Parameter(description = "Category object to be created")
-            @RequestBody CreationCategoryRequest category) {
-        return "Creating a new category.";
+            @RequestBody String name) {
+        return categoryService.create(name);
     }
 
     @PutMapping("/{id}")
@@ -72,12 +69,12 @@ public class CategoryController {
             summary = "Update category",
             description = "Update category by id"
     )
-    public String updateCategory(
+    public Category updateCategory(
             @Parameter(description = "Id of the category to be updated")
             @PathVariable UUID id,
             @Parameter(description = "Category object to be updated")
-            @RequestBody UpdateCategoryRequest category) {
-        return "Updating a category.";
+            @RequestBody String name) {
+        return categoryService.update(id, name);
     }
 
     @DeleteMapping("/{id}")
@@ -85,10 +82,10 @@ public class CategoryController {
             summary = "Delete category",
             description = "Delete category by id"
     )
-    public String deleteCategory(
+    public void deleteCategory(
             @Parameter(description = "Id of the category to delete")
             @PathVariable UUID id) {
-        return "Deleting a category.";
+        categoryService.deleteById(id);
     }
 
 }
