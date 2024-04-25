@@ -15,7 +15,7 @@ public class Category {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "name", unique = true, length = 100)
+    @Column(name = "name")
     private String name;
 
     public Category(UUID id, String name) {
@@ -38,7 +38,7 @@ public class Category {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String newName) {
+        this.name = newName;
     }
 }
