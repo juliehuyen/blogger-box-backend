@@ -16,17 +16,18 @@ public class PostServiceImpl implements PostService {
     private final List<Post> temporaryPosts;
 
     public PostServiceImpl() {
+        Category temporaryCategory = new Category(UUID.randomUUID(), "my first category");
         temporaryPosts = new ArrayList<>();
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", UUID.randomUUID(), new Date()));
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", UUID.randomUUID(), new Date()));
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", UUID.randomUUID(), new Date()));
+        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", temporaryCategory, new Date()));
+        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", temporaryCategory, new Date()));
+        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", temporaryCategory, new Date()));
     }
 
 
     @Override
-    public List<Post> getAllByCategoryId(UUID categoryId) {
+    public List<Post> getAllByCategoryId(Category category) {
         return temporaryPosts.stream()
-                .filter(post -> categoryId.equals(post.getCategoryId()))
+                .filter(post -> category.equals(post.getCategory()))
                 .toList();
     }
 
@@ -44,8 +45,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post create(String title, String content, UUID categoryId) {
-        Post post = new Post(UUID.randomUUID(), title, content, categoryId, new Date());
+    public Post create(String title, String content, Category category) {
+        Post post = new Post(UUID.randomUUID(), title, content, category, new Date());
         temporaryPosts.add(post);
         return post;
     }

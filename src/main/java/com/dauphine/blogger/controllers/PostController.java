@@ -1,5 +1,6 @@
 package com.dauphine.blogger.controllers;
 
+import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
 import com.dauphine.blogger.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,9 +30,9 @@ public class PostController {
             @RequestBody String title,
             @Parameter(description = "Content of the post")
             @RequestBody String content,
-            @Parameter(description = "Id of the category")
-            @RequestBody UUID categoryId) {
-        return postService.create(title, content, categoryId);
+            @Parameter(description = "Category of the post")
+            @RequestBody Category category) {
+        return postService.create(title, content, category);
     }
 
     @PutMapping("/{id}")
@@ -75,9 +76,9 @@ public class PostController {
             description = "Returns all posts by path variable"
     )
     public List<Post> retrievePostByCategory(
-            @Parameter(description = "Id of the category")
-            @PathVariable UUID categoryId) {
-        return postService.getAllByCategoryId(categoryId);
+            @Parameter(description = "Category chosen")
+            @PathVariable Category category) {
+        return postService.getAllByCategoryId(category);
     }
 
 }

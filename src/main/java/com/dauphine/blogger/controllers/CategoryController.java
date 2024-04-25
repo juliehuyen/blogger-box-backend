@@ -69,10 +69,10 @@ public class CategoryController {
             summary = "Delete category",
             description = "Delete category by id"
     )
-    public void deleteCategory(
+    public boolean deleteCategory(
             @Parameter(description = "Id of the category to delete")
             @PathVariable UUID id) {
-        categoryService.deleteById(id);
+        return categoryService.deleteById(id);
     }
 
 }
