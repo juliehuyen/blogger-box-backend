@@ -55,10 +55,10 @@ public class PostController {
             summary = "Delete post",
             description = "Delete post by id"
     )
-    public void deletePost(
+    public boolean deletePost(
             @Parameter(description = "Id of the post to delete")
             @PathVariable UUID id) {
-        postService.deleteById(id);
+        return postService.deleteById(id);
     }
 
     @GetMapping("")

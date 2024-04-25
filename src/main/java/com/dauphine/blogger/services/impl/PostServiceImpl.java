@@ -2,10 +2,10 @@ package com.dauphine.blogger.services.impl;
 
 import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
+import com.dauphine.blogger.repositories.PostRepository;
 import com.dauphine.blogger.services.PostService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -13,59 +13,49 @@ import java.util.UUID;
 @Service
 public class PostServiceImpl implements PostService {
 
-    private final List<Post> temporaryPosts;
+    private final PostRepository postRepository;
 
-    public PostServiceImpl() {
-        Category temporaryCategory = new Category(UUID.randomUUID(), "my first category");
-        temporaryPosts = new ArrayList<>();
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", temporaryCategory, new Date()));
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", temporaryCategory, new Date()));
-        temporaryPosts.add(new Post(UUID.randomUUID(), "my first post", "content", temporaryCategory, new Date()));
+    public PostServiceImpl(PostRepository repository) {
+        this.postRepository = repository;
     }
 
 
     @Override
     public List<Post> getAllByCategoryId(Category category) {
-        return temporaryPosts.stream()
-                .filter(post -> category.equals(post.getCategory()))
-                .toList();
+        return postRepository.findByCategory(category);
     }
 
     @Override
     public List<Post> getAll() {
-        return temporaryPosts;
+        return postRepository.findAll();
     }
 
     @Override
     public Post getById(UUID id) {
-        return temporaryPosts.stream()
-                .filter(post -> id.equals(post.getId()))
-                .findFirst()
+        return postRepository.findById(id)
                 .orElse(null);
     }
 
     @Override
     public Post create(String title, String content, Category category) {
         Post post = new Post(UUID.randomUUID(), title, content, category, new Date());
-        temporaryPosts.add(post);
-        return post;
+        return postRepository.save(post);
     }
 
     @Override
     public Post update(UUID id, String title, String content) {
-        Post post = temporaryPosts.stream()
-                .filter(c -> id.equals(c.getId()))
-                .findFirst()
-                .orElse(null);
-        if (post != null) {
-            post.setTitle(title);
-            post.setContent(content);
+        Post post = getById(id);
+        if (post == null) {
+            return null;
         }
-        return post;
+        post.setTitle(title);
+        post.setContent(content);
+        return postRepository.save(post);
     }
 
     @Override
-    public void deleteById(UUID id) {
-        temporaryPosts.removeIf(post -> id.equals(post.getId()));
+    public boolean deleteById(UUID id) {
+        postRepository.deleteById(id);
+        return true;
     }
 }
