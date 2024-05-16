@@ -19,13 +19,20 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("")
+    /*@GetMapping("")
     @Operation(
             summary = "Retrieve all categories",
             description = "Returns all the categories"
     )
     public List<Category> retrieveAllCategories() {
         return categoryService.getAll();
+    }*/
+
+    @GetMapping
+    public List<Category> getAll(@RequestParam String name) {
+        return name == null || name.isBlank()
+                ? categoryService.getAll()
+                : categoryService.getAllByName(name);
     }
 
     @GetMapping("/{id}")

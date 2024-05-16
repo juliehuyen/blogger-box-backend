@@ -58,4 +58,9 @@ public class PostServiceImpl implements PostService {
         postRepository.deleteById(id);
         return true;
     }
+
+    @Override
+    public List<Post> findAllPostByTitleOrContent(String title, String content) {
+        return postRepository.findAllPostByTitleOrContent(title,content);
+    }
 }

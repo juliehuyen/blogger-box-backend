@@ -13,4 +13,5 @@ public interface CategoryService {
     Category update(UUID id, String name);
     boolean deleteById(UUID id);
 
+    List<Category> getAllByName(String name);
 }

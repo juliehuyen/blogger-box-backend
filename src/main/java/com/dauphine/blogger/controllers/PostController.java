@@ -60,13 +60,16 @@ public class PostController {
         return postService.deleteById(id);
     }
 
-    @GetMapping("")
+    @GetMapping()
     @Operation(
-            summary = "Get all posts",
-            description = "Retrieve all posts ordered by creation date"
+            summary = "Retrieve all posts ordered by created_date endpoint ",
+            description = "Returns a list of all posts filter like name or content"
     )
-    public List<Post> retrieveAllPosts() {
-        return postService.getAll();
+    public List<Post> retrieveAllPosts(@RequestParam(required = false)String value) {
+        List<Post> posts = value == null || value.isBlank()
+                ? postService.getAll()
+                : postService.findAllPostByTitleOrContent(value,value);
+        return posts;
     }
 
     @GetMapping("/categories/{id}/posts")
