@@ -29,7 +29,11 @@ public class CategoryController {
     }*/
 
     @GetMapping
-    public List<Category> getAll(@RequestParam String name) {
+    public List<Category> getAll() {
+        return categoryService.getAll();
+    }
+
+    public List<Category> getAllByName(@RequestParam String name) {
         return name == null || name.isBlank()
                 ? categoryService.getAll()
                 : categoryService.getAllByName(name);
