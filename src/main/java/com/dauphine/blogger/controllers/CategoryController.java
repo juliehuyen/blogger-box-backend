@@ -1,11 +1,16 @@
 package com.dauphine.blogger.controllers;
 
+import com.dauphine.blogger.exceptions.CategoryNameAlreadyExistsException;
+import com.dauphine.blogger.exceptions.CategoryNotFoundByIdException;
 import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,46 +24,40 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    /*@GetMapping("")
-    @Operation(
-            summary = "Retrieve all categories",
-            description = "Returns all the categories"
-    )
-    public List<Category> retrieveAllCategories() {
-        return categoryService.getAll();
-    }*/
-
     @GetMapping
-    public List<Category> getAll() {
-        return categoryService.getAll();
-    }
-
-    public List<Category> getAllByName(@RequestParam String name) {
-        return name == null || name.isBlank()
-                ? categoryService.getAll()
-                : categoryService.getAllByName(name);
+    @Operation(
+            summary = "Get all categories",
+            description = "Retrieve all categories or filter like name"
+    )
+    public ResponseEntity<List<Category>> getAll(@RequestParam(required = false) String name) {
+        List<Category> categories = categoryService.getAll();
+        return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
     @Operation(
-            summary = "Retrieve a category by id",
-            description = "Returns a category by path variable"
+            summary = "Get category by id",
+            description = "Retrieve a category by id"
     )
-    public Category retrieveCategoryById(
+    public ResponseEntity<Category> retrieveCategoryById(
             @Parameter(description = "Id of the category to retrieve")
-            @PathVariable UUID id) {
-        return categoryService.getById(id);
+            @PathVariable UUID id) throws CategoryNotFoundByIdException {
+            Category category = categoryService.getById(id);
+            return ResponseEntity.ok(category);
     }
 
     @PostMapping("")
     @Operation(
             summary = "Create a new category",
-            description = "Creating a new category"
+            description = "Creating a new category, and the only required field is the name of the category to create"
     )
-    public Category createCategory(
+    public ResponseEntity<Category> createCategory(
             @Parameter(description = "Name of the category")
-            @RequestBody String name) {
-        return categoryService.create(name);
+            @RequestBody String name) throws CategoryNameAlreadyExistsException {
+        Category category = categoryService.create(name);
+        return ResponseEntity
+                .created(URI.create("v1/categories/" + category.getId()))
+                .body(category);
     }
 
     @PutMapping("/{id}")
@@ -66,12 +65,13 @@ public class CategoryController {
             summary = "Update category",
             description = "Update category by id"
     )
-    public Category updateCategory(
+    public ResponseEntity<Category> updateCategory(
             @Parameter(description = "Id of the category to be updated")
             @PathVariable UUID id,
             @Parameter(description = "Name of the category")
-            @RequestBody String name) {
-        return categoryService.update(id, name);
+            @RequestBody String name) throws CategoryNotFoundByIdException {
+        Category category = categoryService.update(id, name);
+        return ResponseEntity.ok(category);
     }
 
     @DeleteMapping("/{id}")
@@ -79,10 +79,12 @@ public class CategoryController {
             summary = "Delete category",
             description = "Delete category by id"
     )
-    public boolean deleteCategory(
+    public ResponseEntity<?> deleteCategory(
             @Parameter(description = "Id of the category to delete")
-            @PathVariable UUID id) {
-        return categoryService.deleteById(id);
+            @PathVariable UUID id) throws CategoryNotFoundByIdException {
+        categoryService.getById(id);
+        categoryService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -16,4 +16,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
         WHERE c.name LIKE CONCAT('%', :name, '%')
 """)
     List<Category> findAllByName(@Param("name") String name);
+
+    Category findByName(String name);
 }
