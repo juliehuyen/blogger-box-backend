@@ -69,7 +69,7 @@ public class CategoryController {
             @Parameter(description = "Id of the category to be updated")
             @PathVariable UUID id,
             @Parameter(description = "Name of the category")
-            @RequestBody String name) throws CategoryNotFoundByIdException {
+            @RequestBody String name) throws CategoryNotFoundByIdException, CategoryNameAlreadyExistsException {
         Category category = categoryService.update(id, name);
         return ResponseEntity.ok(category);
     }

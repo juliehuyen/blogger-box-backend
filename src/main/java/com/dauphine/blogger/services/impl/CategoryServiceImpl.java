@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category create(String name) throws CategoryNameAlreadyExistsException {
         if (categoryRepository.findByName(name) == null) {
-            Category category = new Category(UUID.randomUUID(), name);
+            Category category = new Category(name);
             return categoryRepository.save(category);
         }
         else {
@@ -42,17 +42,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category update(UUID id, String newName) throws CategoryNotFoundByIdException {
+    public Category update(UUID id, String newName) throws CategoryNotFoundByIdException, CategoryNameAlreadyExistsException {
         Category category = getById(id);
         if (category == null) {
             throw new CategoryNotFoundByIdException();
+        }
+        if (categoryRepository.findByName(newName) != null) {
+            throw new CategoryNameAlreadyExistsException();
         }
         category.setName(newName);
         return categoryRepository.save(category);
     }
 
     @Override
-    public boolean deleteById(UUID id) {
+    public boolean deleteById(UUID id) throws CategoryNotFoundByIdException {
+        getById(id);
         categoryRepository.deleteById(id);
         return true;
     }
