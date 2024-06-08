@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface PostRepository extends JpaRepository<Post, UUID> {
     List<Post> findByCategory(Category category);
     List<Post> findAllPostByTitleOrContent(@Param("title") String title, @Param("content") String content);
+    boolean existsById(UUID id);
 }

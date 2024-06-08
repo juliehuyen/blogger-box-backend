@@ -16,7 +16,7 @@ public interface PostService {
     Post getById(UUID id) throws PostNotFoundByIdException;
     Post create(CreationPostRequest postRequest) throws CategoryNotFoundByIdException;
     Post update(UUID id, String title, String content) throws PostNotFoundByIdException;
-    boolean deleteById(UUID id);
+    boolean deleteById(UUID id) throws PostNotFoundByIdException;
     List<Post> findAllPostByTitleOrContent(String title, String content);
 
 }

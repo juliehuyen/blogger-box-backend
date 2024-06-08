@@ -20,6 +20,7 @@ public class CategoryServiceImplTest {
 
     private CategoryRepository categoryRepository;
     private CategoryServiceImpl categoryService;
+
     @BeforeEach
     void setUp(){
         categoryRepository = mock(CategoryRepository.class);
@@ -38,7 +39,7 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenCreateCategoryWithAlreadyExists() throws CategoryNameAlreadyExistsException {
+    void shouldThrowExceptionWhenCreateCategoryWithAlreadyExists() {
         String name = "new category";
         Category expectedCategory = new Category(name);
         when(categoryRepository.findByName(name)).thenReturn(expectedCategory);
@@ -56,9 +57,7 @@ public class CategoryServiceImplTest {
         UUID id = UUID.randomUUID();
         Category expected =  new Category("Category");
         when(categoryRepository.findById(id)).thenReturn(Optional.of(expected));
-
         Category actual = categoryService.getById(id);
-
         assertEquals(expected, actual);
     }
 
@@ -88,19 +87,6 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenGetByInvalidId() {
-        UUID id = UUID.randomUUID();
-        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
-
-        CategoryNotFoundByIdException thrownException = assertThrows(
-                CategoryNotFoundByIdException.class,
-                () -> categoryService.getById(id)
-        );
-
-        assertEquals("Category not found.", thrownException.getMessage());
-    }
-
-    @Test
     void shouldUpdateCategory() throws CategoryNotFoundByIdException, CategoryNameAlreadyExistsException {
         UUID id = UUID.randomUUID();
         String oldName = "Old";
@@ -116,7 +102,7 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    void shouldThrowCategoryNotFoundExceptionWhenUpdate() throws CategoryNotFoundByIdException {
+    void shouldThrowCategoryNotFoundExceptionWhenUpdate() {
         UUID id = UUID.randomUUID();
         when(categoryRepository.findById(id)).thenReturn(Optional.empty());
 

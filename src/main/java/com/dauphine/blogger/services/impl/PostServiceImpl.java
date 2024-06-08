@@ -59,7 +59,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public boolean deleteById(UUID id) {
+    public boolean deleteById(UUID id) throws PostNotFoundByIdException {
+        getById(id);
         postRepository.deleteById(id);
         return true;
     }
